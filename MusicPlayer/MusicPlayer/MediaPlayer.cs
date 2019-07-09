@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,14 +26,14 @@ namespace MusicPlayer
         }
 
         public List<string> Files = new List<string>();
-        public List<string> Path = new List<string>();
+        public List<string> Paths = new List<string>();
 
         private void Add_Click(object sender, EventArgs e)
         {
-            start = FileAdd(start);
+            FileAdd();
         }
         
-        private int FileAdd(int start)
+        private void FileAdd()
         {
             openFileDialog.Filter = "MP3 files (*.mp3)|*.mp3|All files (*.*)|*.*";
             openFileDialog.Multiselect = true;
@@ -40,22 +41,20 @@ namespace MusicPlayer
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 Files.AddRange(openFileDialog.SafeFileNames);
-                Path.AddRange(openFileDialog.FileNames);
+                Paths.AddRange(openFileDialog.FileNames);
                 
                     for (int i = start; i < Files.Count; i++)
                     {
                         MusicList.Items.Add(Files[i]);
                         start++;
                     }
-
             }
-            return start;
         }
 
 
         private void ListBox1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            WMPlayer.URL = Path[MusicList.SelectedIndex];
+            WMPlayer.URL = Paths[MusicList.SelectedIndex];
         }
 
         private void MediaPlayer_FormClosing(object sender, FormClosingEventArgs e)
@@ -73,10 +72,26 @@ namespace MusicPlayer
 
         private void MusicList_DragDrop(object sender, DragEventArgs e)
         {
+            
             string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-            int i;
-            for (i = 0; i < s.Length; i++)
-                MusicList.Items.Add(s[i]);
+
+            foreach (var item in s)
+            {
+                Files.Add(Path.GetFileNameWithoutExtension(item));
+            }
+            Paths.AddRange((string[])e.Data.GetData(DataFormats.FileDrop));
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                MusicList.Items.Add(Files[i]);
+            }
+        }
+
+        private void ShuffleButton_Click(object sender, EventArgs e)
+        {
+            Random rnd = new Random();
+            WMPlayer.URL = Paths[rnd.Next(0, Paths.Count)];
+
         }
     }
 }
