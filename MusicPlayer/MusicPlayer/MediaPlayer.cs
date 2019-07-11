@@ -1,4 +1,7 @@
 ﻿using AxWMPLib;
+using Microsoft.WindowsAPICodePack.Shell;
+using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using MusicPlayer.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,10 +22,6 @@ namespace MusicPlayer
         public MediaPlayer()
         {
             InitializeComponent();
-            this.MusicList.DragDrop += new
-           System.Windows.Forms.DragEventHandler(this.MusicList_DragDrop);
-            this.MusicList.DragEnter += new
-                       System.Windows.Forms.DragEventHandler(this.MusicList_DragEnter);
         }
 
         public List<string> Files = new List<string>();
@@ -30,61 +29,86 @@ namespace MusicPlayer
 
         private void Add_Click(object sender, EventArgs e)
         {
-            FileAdd();
+            MusicAdd();
         }
-        
-        private void FileAdd()
+
+        private void MusicAdd()
         {
-            openFileDialog.Filter = "MP3 files (*.mp3)|*.mp3|All files (*.*)|*.*";
+            openFileDialog.Filter = "MP3 files (*.mp3)|*.mp3";
             openFileDialog.Multiselect = true;
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Files.AddRange(openFileDialog.SafeFileNames);
                 Paths.AddRange(openFileDialog.FileNames);
-                
-                    for (int i = start; i < Files.Count; i++)
+
+                for (int i = start; i < Paths.Count; i++)
+                {
+                    var newMusic = new Music
                     {
-                        MusicList.Items.Add(Files[i]);
-                        start++;
-                    }
+                        Title = Path.GetFileNameWithoutExtension(Paths[i]),
+                        MPath = Paths[i],
+                        Length = GetDuration(Paths[i]).ToString(@"mm\:ss"),
+                    };
+                    start++;
+                    var MusicControl = new MusicNameControl(newMusic);
+                    MusicControl.Selected += OnSelect;
+                    MusicControl.Playing += Play;
+                    MusicControl.Del += Delete;
+                    MusicPanel.Controls.Add(MusicControl);
+                    CountLabel.Text = start.ToString();
+                }
             }
         }
 
-
-        private void ListBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void Delete(object sender, Music e)
         {
-            WMPlayer.URL = Paths[MusicList.SelectedIndex];
+            if (sender is Control control)
+            {
+                control.Dispose();
+                start--;
+                Paths.Remove(e.MPath);
+                CountLabel.Text = start.ToString();
+            }
+        }
+
+        public void Play(object sender, Music e)
+        {
+            WMPlayer.URL = e.MPath;
+            ResetLColors();
+            if (sender is Control control)
+            {
+                control.ForeColor = Color.FromArgb(153, 0, 0);
+            }
+        }
+
+        private void ResetLColors()
+        {
+            foreach (Control control in MusicPanel.Controls)
+            {
+                control.ForeColor = Color.Black;
+            }
+        }
+
+        private void OnSelect(object sender, Music e)
+        {
+            ResetColors();
+            if (sender is Control control)
+            {
+                control.BackColor = Color.FromArgb(104, 159, 247);
+            }
+        }
+
+        private void ResetColors()
+        {
+            foreach (Control control in MusicPanel.Controls)
+            {
+                control.BackColor = Color.FromArgb(192, 255, 255);
+            }
         }
 
         private void MediaPlayer_FormClosing(object sender, FormClosingEventArgs e)
         {
             WMPlayer.Dispose();
-        }
-
-        private void MusicList_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effect = DragDropEffects.All;
-            else
-                e.Effect = DragDropEffects.None;
-        }
-
-        private void MusicList_DragDrop(object sender, DragEventArgs e)
-        {
-            
-            string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-
-            foreach (var item in s)
-            {
-                Files.Add(Path.GetFileNameWithoutExtension(item));
-            }
-            Paths.AddRange((string[])e.Data.GetData(DataFormats.FileDrop));
-
-            for (int i = 0; i < s.Length; i++)
-            {
-                MusicList.Items.Add(Files[i]);
-            }
         }
 
         private void ShuffleButton_Click(object sender, EventArgs e)
@@ -93,5 +117,49 @@ namespace MusicPlayer
             WMPlayer.URL = Paths[rnd.Next(0, Paths.Count)];
 
         }
+
+        private void MusicPanel_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.All;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void MusicPanel_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            Paths.AddRange(s.Where(a=>Path.GetExtension(a)==".mp3"));
+
+            for (int i = start; i < Paths.Count; i++)
+            {
+                var newMusic = new Music
+                {
+                    Title = Path.GetFileNameWithoutExtension(Paths[i]),
+                    MPath = Paths[i],
+                    Length=GetDuration(Paths[i]).ToString(@"mm\:ss")
+                };
+                start++;
+                var MusicControl = new MusicNameControl(newMusic);
+                MusicControl.Selected += OnSelect;
+                MusicControl.Playing += Play;
+                MusicPanel.Controls.Add(MusicControl);
+                CountLabel.Text = start.ToString();
+            }
+        }
+        private static TimeSpan GetDuration(string filePath)
+        {
+            using (var shell = ShellObject.FromParsingName(filePath))
+            {
+                ulong t = 0;
+                IShellProperty prop = shell.Properties.System.Media.Duration;
+                if (prop.ValueAsObject != null)
+                {
+                    t = (ulong)prop.ValueAsObject;
+                }
+                return TimeSpan.FromTicks((long)t);
+            }
+        }
+
     }
 }

@@ -28,12 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MediaPlayer));
             this.WMPlayer = new AxWMPLib.AxWindowsMediaPlayer();
-            this.MusicList = new System.Windows.Forms.ListBox();
             this.AddButton = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ShuffleButton = new System.Windows.Forms.Button();
+            this.MusicPanel = new System.Windows.Forms.FlowLayoutPanel();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.CountLabel = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.DurationLabel = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.WMPlayer)).BeginInit();
             this.SuspendLayout();
             // 
@@ -46,23 +52,6 @@
             this.WMPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("WMPlayer.OcxState")));
             this.WMPlayer.Size = new System.Drawing.Size(784, 543);
             this.WMPlayer.TabIndex = 0;
-            // 
-            // MusicList
-            // 
-            this.MusicList.AllowDrop = true;
-            this.MusicList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.MusicList.Dock = System.Windows.Forms.DockStyle.Right;
-            this.MusicList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MusicList.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.MusicList.FormattingEnabled = true;
-            this.MusicList.ItemHeight = 16;
-            this.MusicList.Location = new System.Drawing.Point(790, 0);
-            this.MusicList.Name = "MusicList";
-            this.MusicList.Size = new System.Drawing.Size(298, 543);
-            this.MusicList.TabIndex = 2;
-            this.MusicList.DragDrop += new System.Windows.Forms.DragEventHandler(this.MusicList_DragDrop);
-            this.MusicList.DragEnter += new System.Windows.Forms.DragEventHandler(this.MusicList_DragEnter);
-            this.MusicList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ListBox1_MouseDoubleClick);
             // 
             // AddButton
             // 
@@ -94,15 +83,65 @@
             this.ShuffleButton.UseVisualStyleBackColor = false;
             this.ShuffleButton.Click += new System.EventHandler(this.ShuffleButton_Click);
             // 
+            // MusicPanel
+            // 
+            this.MusicPanel.AllowDrop = true;
+            this.MusicPanel.AutoScroll = true;
+            this.MusicPanel.Location = new System.Drawing.Point(790, 0);
+            this.MusicPanel.Name = "MusicPanel";
+            this.MusicPanel.Size = new System.Drawing.Size(298, 486);
+            this.MusicPanel.TabIndex = 4;
+            this.MusicPanel.DragDrop += new System.Windows.Forms.DragEventHandler(this.MusicPanel_DragDrop);
+            this.MusicPanel.DragEnter += new System.Windows.Forms.DragEventHandler(this.MusicPanel_DragEnter);
+            // 
+            // CountLabel
+            // 
+            this.CountLabel.AutoSize = true;
+            this.CountLabel.Location = new System.Drawing.Point(790, 489);
+            this.CountLabel.Name = "CountLabel";
+            this.CountLabel.Size = new System.Drawing.Size(13, 13);
+            this.CountLabel.TabIndex = 5;
+            this.CountLabel.Text = "0";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(826, 489);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(32, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Items";
+            // 
+            // DurationLabel
+            // 
+            this.DurationLabel.AutoSize = true;
+            this.DurationLabel.Location = new System.Drawing.Point(909, 489);
+            this.DurationLabel.Name = "DurationLabel";
+            this.DurationLabel.Size = new System.Drawing.Size(0, 13);
+            this.DurationLabel.TabIndex = 5;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(947, 489);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "Hours";
+            // 
             // MediaPlayer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
             this.ClientSize = new System.Drawing.Size(1088, 543);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.DurationLabel);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.CountLabel);
+            this.Controls.Add(this.MusicPanel);
             this.Controls.Add(this.ShuffleButton);
             this.Controls.Add(this.AddButton);
-            this.Controls.Add(this.MusicList);
             this.Controls.Add(this.WMPlayer);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Name = "MediaPlayer";
@@ -110,16 +149,22 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MediaPlayer_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.WMPlayer)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private AxWMPLib.AxWindowsMediaPlayer WMPlayer;
-        private System.Windows.Forms.ListBox MusicList;
         private System.Windows.Forms.Button AddButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.Button ShuffleButton;
+        private System.Windows.Forms.FlowLayoutPanel MusicPanel;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Label CountLabel;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label DurationLabel;
+        private System.Windows.Forms.Label label4;
     }
 }
 
