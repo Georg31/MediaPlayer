@@ -52,6 +52,7 @@
             this.WMPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("WMPlayer.OcxState")));
             this.WMPlayer.Size = new System.Drawing.Size(784, 543);
             this.WMPlayer.TabIndex = 0;
+            this.WMPlayer.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.WMPlayer_PlayStateChange);
             // 
             // AddButton
             // 
@@ -123,7 +124,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(947, 489);
+            this.label4.Location = new System.Drawing.Point(960, 489);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(35, 13);
             this.label4.TabIndex = 5;

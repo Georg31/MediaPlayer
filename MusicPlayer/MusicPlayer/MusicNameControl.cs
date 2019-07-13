@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MusicPlayer.Models;
+using AxWMPLib;
 
 namespace MusicPlayer
 {
@@ -15,7 +16,6 @@ namespace MusicPlayer
     {
         public event EventHandler<Music> Selected;
         public event EventHandler<Music> Playing;
-        public event EventHandler<Music> Del;
 
 
         public MusicNameControl(Music music)
@@ -25,6 +25,8 @@ namespace MusicPlayer
             MusicNameLabel.Text = music.Title.Length < 30 ? music.Title : music.Title.Substring(0, 30)+"...";
             LengthLabel.Text = music.Length;
         }
+
+
         public Music Music { get; }
 
 
@@ -35,8 +37,8 @@ namespace MusicPlayer
 
         private void MusicNameControl_MouseHover(object sender, EventArgs e)
         {
-            ToolTip toolTip = new ToolTip();
-            toolTip.Show(Music.Title,this);
+            
+            toolTip1.Show(Music.Title,this);
         }
 
         private void MusicNameControl_MouseClick(object sender, MouseEventArgs e)
@@ -45,22 +47,5 @@ namespace MusicPlayer
 
         }
 
-        private void MusicNameControl_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                contextMenuStrip1.Show(Cursor.Position);
-            }
-        }
-
-        private void PlayToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Playing?.Invoke(this, Music);
-        }
-
-        private void RemoveFromListToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Del.Invoke(this, Music);
-        }
     }
 }

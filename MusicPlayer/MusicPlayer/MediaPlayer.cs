@@ -18,14 +18,15 @@ namespace MusicPlayer
     public partial class MediaPlayer : Form
     {
         int start = 0;
+        TimeSpan sum = TimeSpan.Zero;
 
         public MediaPlayer()
         {
             InitializeComponent();
         }
 
-        public List<string> Files = new List<string>();
         public List<string> Paths = new List<string>();
+        public List<string> SamePaths = new List<string>();
 
         private void Add_Click(object sender, EventArgs e)
         {
@@ -39,7 +40,18 @@ namespace MusicPlayer
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Paths.AddRange(openFileDialog.FileNames);
+                SamePaths.AddRange(openFileDialog.FileNames);
+                Paths = SamePaths.Distinct().ToList();
+                var pl = WMPlayer.currentPlaylist;
+                for (int i = start; i < Paths.Count; i++)
+                {
+                    var mediaItem = WMPlayer.newMedia(Paths[i]);
+                    pl.appendItem(mediaItem);
+
+                }
+
+                WMPlayer.currentPlaylist = pl;
+
 
                 for (int i = start; i < Paths.Count; i++)
                 {
@@ -53,31 +65,27 @@ namespace MusicPlayer
                     var MusicControl = new MusicNameControl(newMusic);
                     MusicControl.Selected += OnSelect;
                     MusicControl.Playing += Play;
-                    MusicControl.Del += Delete;
                     MusicPanel.Controls.Add(MusicControl);
                     CountLabel.Text = start.ToString();
+                    TimeSpan time = GetDuration(Paths[i]);
+                    sum += time;
+                    DurationLabel.Text = sum.ToString(@"hh\:mm\:ss");
+
+
                 }
             }
         }
 
-        private void Delete(object sender, Music e)
-        {
-            if (sender is Control control)
-            {
-                control.Dispose();
-                start--;
-                Paths.Remove(e.MPath);
-                CountLabel.Text = start.ToString();
-            }
-        }
+
 
         public void Play(object sender, Music e)
         {
-            WMPlayer.URL = e.MPath;
-            ResetLColors();
-            if (sender is Control control)
+            for (int i = 0; i < WMPlayer.currentPlaylist.count; i++)
             {
-                control.ForeColor = Color.FromArgb(153, 0, 0);
+                if (WMPlayer.currentPlaylist.Item[i].sourceURL == e.MPath)
+                {
+                    WMPlayer.Ctlcontrols.playItem(WMPlayer.currentPlaylist.Item[i]);
+                }
             }
         }
 
@@ -129,7 +137,17 @@ namespace MusicPlayer
         private void MusicPanel_DragDrop(object sender, DragEventArgs e)
         {
             string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
-            Paths.AddRange(s.Where(a=>Path.GetExtension(a)==".mp3"));
+            SamePaths.AddRange(s.Where(a => Path.GetExtension(a) == ".mp3"));
+            Paths = SamePaths.Distinct().ToList();
+            var pl = WMPlayer.currentPlaylist;
+            for (int i = start; i < Paths.Count; i++)
+            {
+                var mediaItem = WMPlayer.newMedia(Paths[i]);
+                pl.appendItem(mediaItem);
+            }
+            WMPlayer.currentPlaylist = pl;
+
+
 
             for (int i = start; i < Paths.Count; i++)
             {
@@ -137,7 +155,7 @@ namespace MusicPlayer
                 {
                     Title = Path.GetFileNameWithoutExtension(Paths[i]),
                     MPath = Paths[i],
-                    Length=GetDuration(Paths[i]).ToString(@"mm\:ss")
+                    Length = GetDuration(Paths[i]).ToString(@"mm\:ss")
                 };
                 start++;
                 var MusicControl = new MusicNameControl(newMusic);
@@ -145,6 +163,9 @@ namespace MusicPlayer
                 MusicControl.Playing += Play;
                 MusicPanel.Controls.Add(MusicControl);
                 CountLabel.Text = start.ToString();
+                TimeSpan time = GetDuration(Paths[i]);
+                sum += time;
+                DurationLabel.Text = sum.ToString(@"hh\:mm\:ss");
             }
         }
         private static TimeSpan GetDuration(string filePath)
@@ -158,6 +179,26 @@ namespace MusicPlayer
                     t = (ulong)prop.ValueAsObject;
                 }
                 return TimeSpan.FromTicks((long)t);
+            }
+        }
+
+        private void WMPlayer_PlayStateChange(object sender, _WMPOCXEvents_PlayStateChangeEvent e)
+        {
+
+
+            if (WMPlayer.playState == WMPLib.WMPPlayState.wmppsPlaying)
+            {
+                int i;
+                for (i = 0; i < WMPlayer.currentPlaylist.count - 1; i++)
+                {
+                    if (WMPlayer.currentMedia.isIdentical[WMPlayer.currentPlaylist.Item[i]])
+                    {
+
+                        break;
+                    }
+                }
+                ResetLColors();
+                MusicPanel.Controls[i].ForeColor = Color.FromArgb(153, 0, 0);
             }
         }
 
