@@ -50,8 +50,6 @@ namespace MusicPlayer
 
                 }
 
-                WMPlayer.currentPlaylist = pl;
-
 
                 for (int i = start; i < Paths.Count; i++)
                 {
@@ -145,9 +143,6 @@ namespace MusicPlayer
                 var mediaItem = WMPlayer.newMedia(Paths[i]);
                 pl.appendItem(mediaItem);
             }
-            WMPlayer.currentPlaylist = pl;
-
-
 
             for (int i = start; i < Paths.Count; i++)
             {

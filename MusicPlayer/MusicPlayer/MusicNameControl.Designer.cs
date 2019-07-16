@@ -39,24 +39,24 @@
             this.MusicNameLabel.AutoSize = true;
             this.MusicNameLabel.BackColor = System.Drawing.Color.Transparent;
             this.MusicNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MusicNameLabel.Location = new System.Drawing.Point(3, 0);
+            this.MusicNameLabel.Location = new System.Drawing.Point(3, 3);
             this.MusicNameLabel.Name = "MusicNameLabel";
-            this.MusicNameLabel.Size = new System.Drawing.Size(0, 15);
+            this.MusicNameLabel.Size = new System.Drawing.Size(71, 15);
             this.MusicNameLabel.TabIndex = 1;
+            this.MusicNameLabel.Text = "musicLabel";
             this.MusicNameLabel.DoubleClick += new System.EventHandler(this.MusicNameControl_DoubleClick);
             this.MusicNameLabel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MusicNameControl_MouseClick);
-            this.MusicNameLabel.MouseHover += new System.EventHandler(this.MusicNameControl_MouseHover);
             // 
             // LengthLabel
             // 
             this.LengthLabel.AutoSize = true;
-            this.LengthLabel.Location = new System.Drawing.Point(236, 4);
+            this.LengthLabel.Location = new System.Drawing.Point(236, 5);
             this.LengthLabel.Name = "LengthLabel";
-            this.LengthLabel.Size = new System.Drawing.Size(0, 13);
+            this.LengthLabel.Size = new System.Drawing.Size(52, 13);
             this.LengthLabel.TabIndex = 2;
+            this.LengthLabel.Text = "timeLabel";
             this.LengthLabel.DoubleClick += new System.EventHandler(this.MusicNameControl_DoubleClick);
             this.LengthLabel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MusicNameControl_MouseClick);
-            this.LengthLabel.MouseHover += new System.EventHandler(this.MusicNameControl_MouseHover);
             // 
             // MusicNameControl
             // 
@@ -65,9 +65,11 @@
             this.Controls.Add(this.LengthLabel);
             this.Controls.Add(this.MusicNameLabel);
             this.Name = "MusicNameControl";
-            this.Size = new System.Drawing.Size(275, 18);
+            this.Size = new System.Drawing.Size(275, 22);
             this.DoubleClick += new System.EventHandler(this.MusicNameControl_DoubleClick);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MusicNameControl_MouseClick);
+            this.MouseEnter += new System.EventHandler(this.Mouse_Entered);
+            this.MouseLeave += new System.EventHandler(this.Mouse_Left);
             this.MouseHover += new System.EventHandler(this.MusicNameControl_MouseHover);
             this.ResumeLayout(false);
             this.PerformLayout();

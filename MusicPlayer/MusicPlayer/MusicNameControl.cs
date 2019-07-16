@@ -21,8 +21,9 @@ namespace MusicPlayer
         public MusicNameControl(Music music)
         {
             InitializeComponent();
+
             Music = music;
-            MusicNameLabel.Text = music.Title.Length < 30 ? music.Title : music.Title.Substring(0, 30)+"...";
+            MusicNameLabel.Text = music.Title.Length < 30 ? music.Title : music.Title.Substring(0, 30) + "...";
             LengthLabel.Text = music.Length;
         }
 
@@ -37,8 +38,6 @@ namespace MusicPlayer
 
         private void MusicNameControl_MouseHover(object sender, EventArgs e)
         {
-            
-            toolTip1.Show(Music.Title,this);
         }
 
         private void MusicNameControl_MouseClick(object sender, MouseEventArgs e)
@@ -47,5 +46,14 @@ namespace MusicPlayer
 
         }
 
+        private void Mouse_Entered(object sender, EventArgs e)
+        {
+            toolTip1.Show(Music.Title, this);
+        }
+
+        private void Mouse_Left(object sender, EventArgs e)
+        {
+            toolTip1.Hide(this);
+        }
     }
 }

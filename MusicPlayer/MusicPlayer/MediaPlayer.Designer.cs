@@ -118,8 +118,9 @@
             this.DurationLabel.AutoSize = true;
             this.DurationLabel.Location = new System.Drawing.Point(909, 489);
             this.DurationLabel.Name = "DurationLabel";
-            this.DurationLabel.Size = new System.Drawing.Size(0, 13);
+            this.DurationLabel.Size = new System.Drawing.Size(13, 13);
             this.DurationLabel.TabIndex = 5;
+            this.DurationLabel.Text = "0";
             // 
             // label4
             // 
